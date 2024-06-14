@@ -17,4 +17,9 @@ def runGame():
         pass
 
 
-runGame()
+game = OuterTTT.OuterTTT()
+print("1", game)
+
+
+
+#runGame()

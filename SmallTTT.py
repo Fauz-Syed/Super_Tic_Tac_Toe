@@ -46,7 +46,6 @@ class SmallTTT:
         if all(self.tictactoe[i][i] == 'O' for i in range(3)):
             return True
 
-
         #anti-diagonal
         if all(self.tictactoe[i][2-i] == 'X' for i in range(3)):
             return True
@@ -83,6 +82,24 @@ class SmallTTT:
                 print("You already placed a tictactoe")
                 return True
 
+    def playerMoveSMALLGAME2(self, location):
+        if self.checkWinner():
+            self.turn = next(self.game.players)
+            print(f"Player {self.turn} is winner ")
+            self.winner = self.turn
+        else:
+            direction = location.upper()
+            coord = self.game.coordinates.get(direction)
+            x = coord[0]
+            y = coord[1]
+            if not self.checkTicked(x, y):
+                self.tictactoe[x][y] = self.game.turn
+                self.game.turn = next(self.game.players)
+                print(self)
+                return True
+            else:
+                print("You already placed a tictactoe")
+                return True
 
 
 
