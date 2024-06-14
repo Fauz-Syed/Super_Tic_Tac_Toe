@@ -4,9 +4,29 @@ import SmallTTT
 class OuterTTT:
 
     def __init__(self):
-        self.tictac = SmallTTT.SmallTTT()
-        self.board = [[self.tictac.tictactoe for _ in range(3)] for _ in range(3)]
+        self.OTTT = [SmallTTT.SmallTTT() for _ in range(9)]
+        self.turn = 1
+
+    def checkWin(self):
+        pass
+    def checkDraw(self):
+        pass
+    def checkRow(self):
+        pass
+    def checkCol(self):
+        pass
+    def checkDiag(self):
+        pass
+    def checkTicked(self):
+       pass
+    def largeTTTmove(self):
+        self.OTTT[0].playerMoveSMALLGAME2("tl")
+    def completedSmTTT(self):
+        pass
 
     def __str__(self):
-        for i, content in enumerate(self.board):
-            print(str(self.board[i]) + "\n")
+        string = ""
+        for i, content in enumerate(self.OTTT):
+            string +="\n" + str(self.OTTT[i])  + f"{i}" + "\n"
+
+        return string
