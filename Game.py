@@ -1,8 +1,9 @@
 from itertools import cycle
-
 import SmallTTT
 import OuterTTT
 import Player
+
+
 class Game:
 
     def __init__(self):
