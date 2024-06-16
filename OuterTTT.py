@@ -6,7 +6,7 @@ class OuterTTT:
 
     def __init__(self):
         self.large_game = Game.Game()
-        self.OTTT = [[SmallTTT.SmallTTT() for _ in range(3)] for _ in range(3)]
+        self.large_TTT = [[SmallTTT.SmallTTT() for _ in range(3)] for _ in range(3)]
         self.turn = 0
         self.large_last_move = None
         self.complete = False
@@ -30,7 +30,7 @@ class OuterTTT:
 
     def large_checkTicked(self):
         large_x, large_y = self.get_coord()
-        if self.OTTT[large_x][large_x].winner is None:
+        if self.large_TTT[large_x][large_x].winner is None:
             return False
         return True
 
@@ -41,7 +41,7 @@ class OuterTTT:
             # unpacks single coord
             large_x, large_y = large_coord[0], large_coord[1]
             # small board game that is being played on
-            small_within_large = self.OTTT[large_x][large_y]
+            small_within_large = self.large_TTT[large_x][large_y]
             # plays the move on the small board and returns the coordinates as tuple
             self.large_last_move, played = small_within_large.player_move_large_game(self.large_player_turn)
             # tracks moves
@@ -56,7 +56,7 @@ class OuterTTT:
                 large_game_dict = self.get_key_from_value(self.large_game.coordinates, self.large_last_move)
                 print(f"Player {self.large_player_turn}, you are playing in the {large_game_dict} of the large game")
                 # plays the turn (replaces last coordinates)
-                self.large_last_move, played = self.OTTT[large_x][large_y].player_move_large_game(
+                self.large_last_move, played = self.large_TTT[large_x][large_y].player_move_large_game(
                     self.large_player_turn)
                 if played:
                     self.turn_increment(before_change)
@@ -69,10 +69,10 @@ class OuterTTT:
 
     def __str__(self):
         output = ""
-        for row in range(len(self.OTTT)):
+        for row in range(len(self.large_TTT)):
             output += f"Row {row} printed"
-            for col in range(len(self.OTTT[row])):
-                element = self.OTTT[row][col]
+            for col in range(len(self.large_TTT[row])):
+                element = self.large_TTT[row][col]
                 if element is None:
                     pass
                 else:
@@ -99,7 +99,7 @@ class OuterTTT:
         return None  # Optional: return None if no key found
 
     def get_small_game(self, x, y):
-        return self.OTTT[x][y]
+        return self.large_TTT[x][y]
 
     def track_moves(self, player, large, small):
         string = f"{player}-{large}-{small}"
