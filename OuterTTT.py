@@ -5,7 +5,6 @@ import SmallTTT
 class OuterTTT:
 
     def __init__(self):
-        # self.OTTT = [SmallTTT.SmallTTT() for _ in range(9)]
         self.large_game = Game.Game()
         self.OTTT = [[SmallTTT.SmallTTT() for _ in range(3)] for _ in range(3)]
         self.turn = 0
@@ -39,13 +38,10 @@ class OuterTTT:
         if self.turn == 0:
             # tuple coord for large board
             large_coord = self.large_game.coordinates.get(self.chooseLocation())
-
             # unpacks single coord
             large_x, large_y = large_coord[0], large_coord[1]
-
             # small board game that is being played on
             small_within_large = self.OTTT[large_x][large_y]
-
             # plays the move on the small board and returns the coordinates as tuple
             self.large_last_move, played = small_within_large.player_move_large_game(self.large_player_turn)
             # tracks moves
@@ -54,23 +50,18 @@ class OuterTTT:
         else:
             if not self.large_checkTicked():
                 before_change = self.large_last_move
-
                 # gets coord from last move small game
                 large_x, large_y = self.get_coord()
-
                 # gets the string value of the coordinate and notifies player whose turn it is
                 large_game_dict = self.get_key_from_value(self.large_game.coordinates, self.large_last_move)
                 print(f"Player {self.large_player_turn}, you are playing in the {large_game_dict} of the large game")
-
                 # plays the turn (replaces last coordinates)
                 self.large_last_move, played = self.OTTT[large_x][large_y].player_move_large_game(
                     self.large_player_turn)
-
                 if played:
                     self.turn_increment(before_change)
                 else:
                     print(f"Player {self.large_player_turn} unsuccessfully played")
-
                 # after checked ticked
             else:
                 large_x, large_y = self.get_coord()
@@ -119,4 +110,5 @@ class OuterTTT:
         self.turn += 1
         self.large_player_turn = next(self.large_game.players)
         print(
-            f"Turns played: {self.turn}, next Player: {self.large_player_turn}, list of moves: {self.list_moves} \n\n\n")
+            f"Turns played: {self.turn}, next Player: {self.large_player_turn}, "
+            f"list of moves: {self.list_moves} \n\n\n")
