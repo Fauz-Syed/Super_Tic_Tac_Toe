@@ -1,8 +1,7 @@
 # This is a sample Python script.
-import Game
-import OuterTTT
-import SmallTTT
-
+from Tests import funtiontests
+from tic_tac_toe import OuterTTT, SmallTTT
+from tic_tac_toe import Game
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
@@ -17,11 +16,19 @@ def runGame():
         while not ttt.complete:
             ttt.playerMoveSMALLGAME()
             print(ttt)
+
     if which_game == "2":
+        if input("test? press t"):
+            large_game.set_rows_winner()
+            print(large_game)
+            large_game.checkRow()
         while large_game.turn < 81:
             large_game.large_game_move()
             print(large_game)
 
 
-
 runGame()
+
+#test = funtiontests
+#test.test_row_win_condition()
+

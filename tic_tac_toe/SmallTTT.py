@@ -1,7 +1,4 @@
-import random
-import Player
-from itertools import cycle
-import Game
+from tic_tac_toe import Game
 
 
 class SmallTTT:
@@ -120,8 +117,32 @@ class SmallTTT:
         return str(self.small_game.coordinates)
 
     def __str__(self):
-        row1 = self.tictactoe[0]
-        row2 = self.tictactoe[1]
-        row3 = self.tictactoe[2]
-        tic = str(row1) + "\n" + str(row2) + "\n" + str(row3)
+        row1 = "0 ", self.tictactoe[0]
+        row2 = "1 ", self.tictactoe[1]
+        row3 = "2 ", self.tictactoe[2]
+        winner = self.winner
+        tic = str(row1) + "\n" + str(row2) + "\n" + str(row3) + "\n Winner: " + str(winner)
         return tic
+    def set_winner(self, player: str):
+        self.winner = player
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

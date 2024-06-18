@@ -1,7 +1,5 @@
 from itertools import cycle
-import SmallTTT
-import OuterTTT
-import Player
+from tic_tac_toe import Player
 
 
 class Game:
