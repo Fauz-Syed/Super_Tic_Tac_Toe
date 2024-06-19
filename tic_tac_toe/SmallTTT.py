@@ -126,7 +126,22 @@ class SmallTTT:
     def set_winner(self, player: str):
         self.winner = player
 
-
+    def player_move_test_game(self, player_turn, input):
+        if self.checkWinner():
+            self.winner = next(self.small_game.players)
+            print(f"Player {self.winner} is winner ")
+            self.complete = True
+        direction = self.chooseLocation(str(input).upper())
+        coord = self.small_game.coordinates.get(direction)
+        x = coord[0]
+        y = coord[1]
+        if not self.checkTicked(x, y):
+            self.tictactoe[x][y] = player_turn
+            self.amount_of_turns += 1
+            return coord, True
+        else:
+            print("You already placed a tictactoe")
+            return coord, False
 
 
 

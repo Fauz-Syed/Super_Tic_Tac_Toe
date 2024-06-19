@@ -1,3 +1,5 @@
+import random
+
 from tic_tac_toe import Game
 from tic_tac_toe import SmallTTT
 
@@ -14,10 +16,14 @@ class OuterTTT:
         self.list_moves = []
 
     def checkWin(self):
-        pass
+        if self.checkRow() or self.checkCol() or self.checkDiag():
+            return True
+        return False
 
     def checkDraw(self):
-        pass
+        if not self.checkRow() or self.checkCol() or self.checkDiag() and self.turn == 80:
+            return True
+        return False
 
     def checkRow(self):
         s = self.large_TTT
@@ -45,30 +51,41 @@ class OuterTTT:
 
     def checkCol(self):
         s = self.large_TTT
-        t_list = []
+        l_list = []
         m_list = []
-        b_list = []
+        r_list = []
         for i in range(len(s)):
             for j in (range(len(s))):
                 if i == 0:
-                    t_list.append(self.get_small_game(j, i).winner)
+                    l_list.append(self.get_small_game(j, i).winner)
                 elif i == 1:
                     m_list.append(self.get_small_game(j, i).winner)
                 elif i == 2:
-                    b_list.append(self.get_small_game(j, i).winner)
-        if all(item == "X" for item in t_list) or all(item == "O" for item in t_list):
-            print("T is winner")
+                    r_list.append(self.get_small_game(j, i).winner)
+        if all(item == "X" for item in l_list) or all(item == "O" for item in l_list):
+            print("L is winner")
             return True
         if all(item == "X" for item in m_list) or all(item == "O" for item in m_list):
             print("M is winner")
             return True
-        if all(item == "X" for item in b_list) or all(item == "O" for item in b_list):
-            print("B is winner")
+        if all(item == "X" for item in r_list) or all(item == "O" for item in r_list):
+            print("R is winner")
             return True
         return False
 
     def checkDiag(self):
-        pass
+        d_list = []
+        nd_list = []
+        for i in range(len(self.large_TTT)):
+            d_list.append(self.get_small_game(i, i).winner)
+            nd_list.append(self.get_small_game(i, 2 - i).winner)
+        if all(item == "X" for item in d_list) or all(item == "O" for item in d_list):
+            print("Diag is winner")
+            return True
+        if all(item == "X" for item in nd_list) or all(item == "O" for item in nd_list):
+            print("anti-Diag is winner")
+            return True
+        return False
 
     def large_checkTicked(self):
         large_x, large_y = self.get_coord()
@@ -90,22 +107,27 @@ class OuterTTT:
             self.turn_increment(large_coord)
         else:
             if not self.large_checkTicked():
-                before_change = self.large_last_move
-                # Retrieve coordinate from the last move on the small game
-                large_x, large_y = self.get_coord()
-                # Get the string value of the coordinate and notify the player whose turn it is
-                large_game_dict = self.get_key_from_value(self.large_game.coordinates, self.large_last_move)
-                print(f"Player {self.large_player_turn}, you are playing in the {large_game_dict} of the large game.")
-                # Plays the turn (replaces last coordinates)
-                self.large_last_move, played = self.large_TTT[large_x][large_y].player_move_large_game(
-                    self.large_player_turn)
-                if played:
-                    self.turn_increment(before_change)
+                if not self.checkWin() or self.checkDraw():
+                    before_change = self.large_last_move
+                    # Retrieve coordinate from the last move on the small game
+                    large_x, large_y = self.get_coord()
+                    # Get the string value of the coordinate and notify the player whose turn it is
+                    large_game_dict = self.get_key_from_value(self.large_game.coordinates, self.large_last_move)
+                    print(
+                        f"Player {self.large_player_turn}, you are playing in the {large_game_dict} of the large game.")
+                    # Plays the turn (replaces last coordinates)
+                    self.large_last_move, played = self.large_TTT[large_x][large_y].player_move_large_game(
+                        self.large_player_turn)
+                    if played:
+                        self.turn_increment(before_change)
+                    else:
+                        print(f"Player {self.large_player_turn} unsuccessfully played.")
                 else:
-                    print(f"Player {self.large_player_turn} unsuccessfully played.")
+                    return True
             else:
                 large_x, large_y = self.get_coord()
                 print(f"Invalid move, this box belongs to {self.get_small_game(large_x, large_y).winner}.")
+        return False
 
     def __str__(self):
         output = ""
@@ -190,3 +212,70 @@ class OuterTTT:
                     game_win += f"\nRow {row}: Col {col} - {self.large_TTT[row][col].winner}"
             output += "\n"  # Add a new line after each row
         return output + f"Game won: {game_win}"
+
+    def print_rowcol_data(self):
+        output = ""
+        game_win = ""
+        for row in range(len(self.large_TTT)):
+            for col in range(len(self.large_TTT[row])):
+                element = self.large_TTT[row][col]
+                if element is None:
+                    pass
+                else:
+                    game_win += f"\nRow {row}: Col {col} - {self.large_TTT[row][col].winner}"
+        return f"Game won: {game_win}"
+
+    def choose_input_Location(self, location):
+        direction = str(location).upper()
+        while direction not in self.large_game.validOptions:
+            print("Please enter a valid response: ")
+            direction = str(input("Enter large location: ")).upper()
+        return direction
+    def test_player_move(self, location: str):
+        if self.turn == 0:
+            # Get tuple coordinate for large board
+            large_coord = self.large_game.coordinates.get(self.choose_input_Location(location))
+            # Unpack the coordinate
+            large_x, large_y = large_coord
+            # Reference the small board game that is being played on
+            small_within_large = self.large_TTT[large_x][large_y]
+            # Play the move on the small board and return the coordinates as a tuple
+            self.large_last_move, played = small_within_large.player_move_test_game(self.large_player_turn, location)
+            # Track the move
+            self.turn_increment(large_coord)
+        else:
+            if not self.large_checkTicked():
+                if not self.checkWin() or self.checkDraw():
+                    before_change = self.large_last_move
+                    # Retrieve coordinate from the last move on the small game
+                    large_x, large_y = self.get_coord()
+                    # Get the string value of the coordinate and notify the player whose turn it is
+                    large_game_dict = self.get_key_from_value(self.large_game.coordinates, self.large_last_move)
+                    print(
+                        f"Player {self.large_player_turn}, you are playing in the {large_game_dict} of the large game.")
+                    # Plays the turn (replaces last coordinates)
+                    self.large_last_move, played = self.large_TTT[large_x][large_y].player_move_test_game(
+                        self.large_player_turn, location)
+                    if played:
+                        print(f"Location played: {location}")
+                        self.turn_increment(before_change)
+                    else:
+                        print(f"Player {self.large_player_turn} unsuccessfully played.")
+                else:
+                    return True
+            else:
+                large_x, large_y = self.get_coord()
+                print(f"Invalid move, this box belongs to {self.get_small_game(large_x, large_y).winner}.")
+                self.find_unchecked()
+        return False
+
+    def find_unchecked(self):
+        for i in range(3):
+            for j in range(3):
+                if self.get_small_game(i, j).winner is None:
+                    self.large_last_move = (i, j)
+
+
+    def return_random_coord(self):
+        t = random.choice(list(self.large_game.coordinates))
+        return t
