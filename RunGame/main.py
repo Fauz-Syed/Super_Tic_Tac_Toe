@@ -2,6 +2,7 @@
 from Tests import funtiontests
 from tic_tac_toe import OuterTTT, SmallTTT
 from tic_tac_toe import Game
+
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
@@ -27,8 +28,10 @@ def runGame():
             print(large_game)
 
 
-runGame()
+#runGame()
 
-#test = funtiontests
+test = funtiontests
 #test.test_row_win_condition()
-
+#test.test_column_win_condition()
+#test.test_diagonal_win_condition()
+test.play_random()
