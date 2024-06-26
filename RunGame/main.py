@@ -28,10 +28,10 @@ def runGame():
             print(large_game)
 
 
-#runGame()
+runGame()
 
-test = funtiontests
+#test = funtiontests
 #test.test_row_win_condition()
-#test.test_column_win_condition()
-#test.test_diagonal_win_condition()
-test.play_random()
+# test.test_column_win_condition()
+# test.test_diagonal_win_condition()
+#test.play_random()
