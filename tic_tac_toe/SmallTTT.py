@@ -1,3 +1,6 @@
+from colorama import Fore, Style
+from tabulate import tabulate
+
 from tic_tac_toe import Game
 
 
@@ -9,27 +12,26 @@ class SmallTTT:
         self.tictactoe = [[' ' for _ in range(3)] for _ in range(3)]
         self.winner = None
         self.amount_of_turns = 0
+        self.X = f"{Fore.LIGHTGREEN_EX}X{Style.RESET_ALL}"
+        self.O = f"{Fore.MAGENTA}O{Style.RESET_ALL}"
 
     def checkWinner(self):
         # Check rows
         row_done, player = self.checkRow()
         if row_done:
             self.winner = player
-            print("Won by row", f"{self.winner}")
             return True
 
         # Check columns
         col_done, player = self.checkCol()
         if col_done:
             self.winner = player
-            print("Won by column", f"{self.winner}")
             return True
 
         # Check diagonals
         diag_done, player = self.checkDiag()
         if diag_done:
             self.winner = player
-            print("Won by diagonal", f"{self.winner}")
             return True
 
         # If no winner, continue game or check for draw
@@ -37,31 +39,31 @@ class SmallTTT:
 
     def checkRow(self):
         for i, row in enumerate(self.tictactoe):
-            if all(x == 'X' for x in self.tictactoe[i]):
+            if all(x == self.X for x in self.tictactoe[i]):
                 return True, self.small_game.PlayerX.symbol
-            if all(x == 'O' for x in self.tictactoe[i]):
+            if all(x == self.O for x in self.tictactoe[i]):
                 return True, self.small_game.PlayerO.symbol
         return False, None
 
     def checkCol(self):
         for col in range(len(self.tictactoe[0])):
-            if all(self.tictactoe[row][col] == 'X' for row in range(3)):
+            if all(self.tictactoe[row][col] == self.X for row in range(3)):
                 return True, self.small_game.PlayerX.symbol
-            if all(self.tictactoe[row][col] == 'O' for row in range(3)):
+            if all(self.tictactoe[row][col] == self.O for row in range(3)):
                 return True, self.small_game.PlayerO.symbol
         return False, None
 
     def checkDiag(self):
         # diagonal
-        if all(self.tictactoe[i][i] == 'X' for i in range(3)):
+        if all(self.tictactoe[i][i] == self.X for i in range(3)):
             return True, self.small_game.PlayerX.symbol
-        if all(self.tictactoe[i][i] == 'O' for i in range(3)):
+        if all(self.tictactoe[i][i] == self.O for i in range(3)):
             return True, self.small_game.PlayerO.symbol
 
         # anti-diagonal
-        if all(self.tictactoe[i][2 - i] == 'X' for i in range(3)):
+        if all(self.tictactoe[i][2 - i] == self.X for i in range(3)):
             return True, self.small_game.PlayerX.symbol
-        if all(self.tictactoe[i][2 - i] == 'O' for i in range(3)):
+        if all(self.tictactoe[i][2 - i] == self.O for i in range(3)):
             return True, self.small_game.PlayerO.symbol
         return False, None
 
@@ -80,7 +82,6 @@ class SmallTTT:
         if self.checkWinner():
             turn = next(self.small_game.players)
             print(f"Player {self.winner} is winner ")
-            self.winner = turn
             self.complete = True
         else:
             direction = self.chooseLocation(str(input("Enter small location: ")).upper())
@@ -116,13 +117,25 @@ class SmallTTT:
     def printMap(self):
         return str(self.small_game.coordinates)
 
+    def board_as_string(self):
+        lines = []
+        for row in self.tictactoe:
+            lines.append(" | ".join(row))
+            lines.append("-" * 9)
+        # Remove the last line of dashes
+        g = "\n".join(lines[:-1])
+        g += "\n" + f"Game Won by {self.winner}"
+        return g
+
     def __str__(self):
-        row1 = "0 ", self.tictactoe[0]
-        row2 = "1 ", self.tictactoe[1]
-        row3 = "2 ", self.tictactoe[2]
-        winner = self.winner
-        tic = str(row1) + "\n" + str(row2) + "\n" + str(row3) + "\n Winner: " + str(winner)
-        return tic
+        def center_align(data):
+            max_lengths = [max(len(str(item)) for item in column) for column in zip(*data)]
+            return [[str(item).center(max_lengths[idx]) for idx, item in enumerate(row)] for row in data]
+
+        centered_data = center_align(self.tictactoe)
+        table = tabulate(centered_data, tablefmt="fancy_grid")
+        return table
+
     def set_winner(self, player: str):
         self.winner = player
 
@@ -143,21 +156,31 @@ class SmallTTT:
             print("You already placed a tictactoe")
             return coord, False
 
+    def place_player(self, player: str, one: str, two: str, three: str):
+        one = self.small_game.coordinates.get(one.upper())
+        x = one[0]
+        y = one[1]
+        self.tictactoe[x][y] = player
+        two = self.small_game.coordinates.get(two.upper())
+        x = two[0]
+        y = two[1]
+        self.tictactoe[x][y] = player
+        three = self.small_game.coordinates.get(three.upper())
+        x = three[0]
+        y = three[1]
+        self.tictactoe[x][y] = player
+        if self.checkWinner():
+            turn = next(self.small_game.players)
+            print(f"Player {self.winner} is winner ")
+            self.winner = turn
+            self.complete = True
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    def place_player2(self, player: str, one: str):
+        one = self.small_game.coordinates.get(one.upper())
+        x = one[0]
+        y = one[1]
+        self.tictactoe[x][y] = player
+        if self.checkWinner():
+            self.winner = player
+            self.complete = True
+            print(f"Player {self.winner} is winner ")
