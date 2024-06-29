@@ -1,68 +1,49 @@
-import time
+import unittest
+from unittest.mock import patch
 
-import keyboard
-
-from tic_tac_toe import OuterTTT
-from tic_tac_toe import Game
+from tic_tac_toe.OuterTTT import OuterTTT
 
 
-def __init__(self):
-    pass
-
-
-def test_row_win_condition():
-    test_game = OuterTTT.OuterTTT()
-
-    print(test_game, "\n Testing row check with no winners \n -------------------------------------------")
-    test_game.checkRow()
-    print("\n Testing row check with winners\n -----------------------------------------------------------")
-    test_game.place_player("O", "br", "bm", "bl")
-    print(test_game.print_large_game_with_data())
-    test_game.checkRow()
-
-
-def test_column_win_condition():
-    test_game = OuterTTT.OuterTTT()
-    print(test_game.print_rowcol_data(), "\n Testing column check with no winners "
-                                         "\n -------------------------------------------")
-    test_game.checkCol()
-    test_game.place_player("O", "tl", "mr", "br")
-    test_game.checkCol()
-    print(test_game.print_rowcol_data(), "\n Testing column check with winners  "
-                                         "\n -------------------------------------------")
-
-
-def test_diagonal_win_condition():
-    test_game = OuterTTT.OuterTTT()
-    print(test_game.print_rowcol_data(), "\n Testing diag check with no winners "
-                                         "\n -------------------------------------------")
-    test_game.checkDiag()
-    test_game.place_player("O", "tr", "mm", "bl")
-    test_game.checkDiag()
-    print(test_game.print_rowcol_data(), "\n Testing diag check with winners  "
-                                         "\n -------------------------------------------")
-
-
-def play_random():
-    test_game = OuterTTT.OuterTTT()
-    counter = 0
-    f = 3
-    s = 10
-    m = 5
+def random_cycle(choices):
     while True:
-        if keyboard.is_pressed("f"):
-            f = .2
-        if keyboard.is_pressed("m"):
-            f = 3
-        if keyboard.is_pressed("s"):
-            f = 15
-        if keyboard.is_pressed("p"):
-            print(test_game)
-        if keyboard.is_pressed("i"):
-            print(test_game.print_large_game_with_data())
+        yield random.choice(choices)
 
-        location = test_game.return_random_coord()
-        test_game.test_player_move(location)
-        print(counter, "\n")
-        counter += 1
-        time.sleep(f)
+
+def readinputs():
+    with open("C:\\Users\\fauzs\\OneDrive\\Desktop\\Codes\\PyCharm Projects\\SuperTTT\\Tests\\test_Place1AtATime.txt", 'r') as file:
+        inputs = []
+        lines = file.readlines()
+        for i, line in enumerate(lines):
+            if i <= 4:
+                pass
+            else:
+                inputs.append(line.strip().upper())
+        print(inputs)
+    return inputs
+
+
+class TestLargeMove(unittest.TestCase):
+    testcase1 = readinputs()
+    print(testcase1)
+    random_cycle(["TL", "TM", "TR", "ML", "MM", "MR", "BL", "BM", "BR"])
+
+    def setUp(self):
+        # Set up your test environment here, e.g., initialize the class containing LargeMove
+        self.game_instance = OuterTTT()
+
+    @patch('builtins.input', side_effect=testcase1)
+    def test_LargeMove(self, mock_input):
+        # Here you can simulate different states of the game and call LargeMove
+        i = 0
+
+        while not self.game_instance.complete:
+            self.game_instance.TESTLargeMove()
+            # Add assertions to verify the expected behavior
+            print(self.game_instance, "\n", self.game_instance.print_rowcol_data())
+
+            i += 1
+        return self.game_instance, "\n", self.game_instance.print_rowcol_data()
+
+
+if __name__ == '__main__':
+    print(unittest.main())

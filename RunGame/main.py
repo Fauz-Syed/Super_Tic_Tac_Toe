@@ -23,15 +23,21 @@ def runGame():
             large_game.set_rows_winner()
             print(large_game)
             large_game.checkRow()
-        while large_game.turn < 81:
-            large_game.large_game_move()
+        while large_game.NumOfTurns < 81:
+            # large_game.large_game_move()
+            print(large_game)
+    if which_game == "3":
+        while True:
+            large_game.LargeMove()
             print(large_game)
 
 
-#runGame()
+runGame()
 
 test = funtiontests
 #test.test_row_win_condition()
-#test.test_column_win_condition()
-#test.test_diagonal_win_condition()
-test.play_random()
+# test.test_column_win_condition()
+# test.test_diagonal_win_condition()
+#test.play_random()
+# test.autoPlay()
+# test.RunAllTests()
