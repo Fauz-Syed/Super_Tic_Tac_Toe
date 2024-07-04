@@ -13,21 +13,33 @@ class OuterTTT:
         self.large_game = Game.Game()
         self.large_TTT = [[SmallTTT.SmallTTT() for _ in range(3)] for _ in range(3)]
         self.NumOfTurns = 0
+        self.winner = None
         self.LastMove = None
         self.complete = False
         self.large_player_turn = self.large_game.turn
         self.trackM = self.large_game.track
         self.list_moves = []
-        self.X = f"{Fore.LIGHTGREEN_EX}X{Style.RESET_ALL}"
-        self.O = f"{Fore.MAGENTA}O{Style.RESET_ALL}"
+        self.X = self.large_game.PlayerX.symbol
+        self.Op = self.large_game.PlayerO.symbol
 
     def checkWin(self):
-        if self.checkRow() or self.checkCol() or self.checkDiag():
-            return True
-        return False
+        rowdone, rsymbol = self.checkRow()
+        coldone, csymbol = self.checkCol()
+        diagdon, dsymbol = self.checkDiag()
+        print(csymbol)
+        if rowdone:
+            return True, rsymbol
+        if coldone:
+            return True, csymbol
+        if diagdon:
+            return True, dsymbol
+        return False, None
 
     def checkDraw(self):
-        if self.checkRow() or self.checkCol() or self.checkDiag() and self.NumOfTurns == 80:
+        rowdone, rsymbol = self.checkRow()
+        coldone, csymbol = self.checkCol()
+        diagdon, dsymbol = self.checkDiag()
+        if not (rowdone or coldone or diagdon) and self.NumOfTurns == 81:
             return True
         return False
 
@@ -43,16 +55,25 @@ class OuterTTT:
                     m_list.append(self.get_small_game(i, j).winner)
                 elif i == 2:
                     b_list.append(self.get_small_game(i, j).winner)
-        if all(item == self.X for item in t_list) or all(item == self.O for item in t_list):
+        if all(item == self.X for item in t_list):
             print(f"T is winner")
-            return True
-        if all(item == self.X for item in m_list) or all(item == self.O for item in m_list):
+            return True, self.X
+        if all(item == self.Op for item in t_list):
+            print(f"T is winner")
+            return True, self.Op
+        if all(item == self.X for item in m_list):
             print("M is winner")
-            return True
-        if all(item == self.X for item in b_list) or all(item == self.O for item in b_list):
+            return True, self.X
+        if all(item == self.Op for item in m_list):
+            print("M is winner")
+            return True, self.Op
+        if all(item == self.X for item in b_list):
             print("B is winner")
-            return True
-        return False
+            return True, self.X
+        if all(item == self.Op for item in b_list):
+            print("B is winner")
+            return True, self.Op
+        return False, None
 
     def checkCol(self):
         s = self.large_TTT
@@ -67,16 +88,25 @@ class OuterTTT:
                     m_list.append(self.get_small_game(j, i).winner)
                 elif i == 2:
                     r_list.append(self.get_small_game(j, i).winner)
-        if all(item == self.X for item in l_list) or all(item == self.O for item in l_list):
-            print("L is winner")
-            return True
-        if all(item == self.X for item in m_list) or all(item == self.O for item in m_list):
-            print("M is winner")
-            return True
-        if all(item == self.X for item in r_list) or all(item == self.O for item in r_list):
-            print("R is winner")
-            return True
-        return False
+        if all(item == self.X for item in l_list):
+            print("Left X is winner")
+            return True, self.X
+        if all(item == self.Op for item in l_list):
+            print("Left O is winner")
+            return True, self.Op
+        if all(item == self.X for item in m_list):
+            print(" middle X is winner")
+            return True, self.X
+        if all(item == self.Op for item in m_list):
+            print("Middle O is winner")
+            return True, self.Op
+        if all(item == self.X for item in r_list):
+            print(" right X is winner")
+            return True, self.X
+        if all(item == self.Op for item in r_list):
+            print("Right O is winner")
+            return True, self.Op
+        return False, None
 
     def checkDiag(self):
         d_list = []
@@ -84,17 +114,23 @@ class OuterTTT:
         for i in range(len(self.large_TTT)):
             d_list.append(self.get_small_game(i, i).winner)
             nd_list.append(self.get_small_game(i, 2 - i).winner)
-        if all(item == self.X for item in d_list) or all(item == self.O for item in d_list):
+        if all(item == self.X for item in d_list):
             print("Diag is winner")
-            return True
-        if all(item == self.X for item in nd_list) or all(item == self.O for item in nd_list):
+            return True, self.X
+        if all(item == self.Op for item in d_list):
+            print("Diag is winner")
+            return True, self.Op
+        if all(item == self.X for item in nd_list):
             print("anti-Diag is winner")
-            return True
-        return False
+            return True, self.X
+        if all(item == self.Op for item in nd_list):
+            print("anti-Diag is winner")
+            return True, self.Op
+        return False, None
 
     def large_checkTicked(self):
         large_x, large_y = self.get_coord()
-        if self.large_TTT[large_x][large_x].winner is None:
+        if self.large_TTT[large_x][large_x].complete is False:
             return False
         return True
 
@@ -112,13 +148,13 @@ class OuterTTT:
             self.trackM = next(self.large_game.playersT)
             table = format_enumerated_list(self.list_moves, 5)
             print(
-                f"Turns played: {self.NumOfTurns}, next Player: {self.large_player_turn},list of moves: \n{table} \n\n\n")
+                f"Turns played: {self.NumOfTurns}, next Player: {self.large_player_turn},list of moves: \n{table} \n")
+            updateWinners()
 
         def playLargeTurn():
             OutCoord = self.large_game.coordinates.get(self.chooseLocation())  # get first outer play
             playedX, playedY = OutCoord[0], OutCoord[1]  # unpack the coordinates from player choice
             SmallBoard = self.large_TTT[playedX][playedY]  # using the coord get the small game to be played
-            time.sleep(2)
             InCoord = SmallBoard.player_move_large_game(self.large_player_turn)  # play the move on the small board,
             # store played coord as a tuple of coord and boolean
             self.LastMove = InCoord[0]  # store the last played move coord in small
@@ -132,17 +168,20 @@ class OuterTTT:
                     element = self.large_TTT[row][col]
                     element.checkWinner()
 
-        updateWinners()
-        if self.checkWin():
-            self.large_TTT.winner = self.large_player_turn
+        checkwin, winner = self.checkWin()
+        if checkwin:
+            self.winner = winner
             self.complete = True
+            print(f"THE GAME IS OVER: The game has been won by: {self.winner}. func:LargeMove")
         if self.checkDraw():
             self.complete = True
+            print("The game has ended in a Draw. func:LargeMove")
         if not self.complete:
             if self.NumOfTurns == 0:
                 playLargeTurn()
             else:
                 if self.large_checkTicked():
+                    print("This outer tictactoe has been played. func:LargeMove")
                     playLargeTurn()
 
                 else:
@@ -223,7 +262,7 @@ class OuterTTT:
                     output += f"\n game {col} printed \n" + str(element) + "\n"
                     game_win += f"\nRow {row}: Col {col} - {self.large_TTT[row][col].winner}"
             output += "\n"  # Add a new line after each row
-        return output + f"Game won: {game_win}"
+        return output + f"Game won: {self.winner}"
 
     def print_rowcol_data(self):
         output = ""
@@ -381,11 +420,13 @@ class OuterTTT:
                     element = self.large_TTT[row][col]
                     element.checkWinner()
 
-        if self.checkWin():
+        checkwin, winner = self.checkWin()
+        if checkwin:
             print(Fore.GREEN + "Step: checkWin" + Style.RESET_ALL)
-            self.large_TTT.winner = self.large_player_turn
+            print(checkwin, winner)
+            self.winner = winner
             self.complete = True
-            print(f"THE GAME IS OVER: The game has been won by: {self.large_player_turn}. func:LargeMove")
+            print(f"THE GAME IS OVER: The game has been won by: {self.winner}. func:LargeMove")
         if self.checkDraw():
             print(Fore.GREEN + "Step: checkDraw" + Style.RESET_ALL)
             self.complete = True
