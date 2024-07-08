@@ -17,25 +17,25 @@ class SmallTTT:
 
     def checkWinner(self):
         # Check rows
-        row_done, player = self.checkRow()
+        row_done, player1 = self.checkRow()
         if row_done:
-            self.winner = player
-            return True
+            self.winner = player1
+            return True, player1
 
         # Check columns
-        col_done, player = self.checkCol()
+        col_done, player2 = self.checkCol()
         if col_done:
-            self.winner = player
-            return True
+            self.winner = player2
+            return True, player2
 
         # Check diagonals
-        diag_done, player = self.checkDiag()
+        diag_done, player3 = self.checkDiag()
         if diag_done:
-            self.winner = player
-            return True
+            self.winner = player3
+            return True, player3
 
         # If no winner, continue game or check for draw
-        return False
+        return False, None
 
     def checkRow(self):
         for i, row in enumerate(self.tictactoe):
@@ -97,10 +97,10 @@ class SmallTTT:
                 print("You already placed a tictactoe")
 
     def player_move_large_game(self, player_turn):
-        if self.checkWinner():
-            turn = next(self.small_game.players)
+        checkwin, player = self.checkWinner()
+        if checkwin:
             print(f"Player {self.winner} is winner ")
-            self.winner = turn
+            self.winner = player
             self.complete = True
         direction = self.chooseLocation(str(input("Enter small location: ")).upper())
         coord = self.small_game.coordinates.get(direction)
@@ -134,7 +134,8 @@ class SmallTTT:
 
         centered_data = center_align(self.tictactoe)
         table = tabulate(centered_data, tablefmt="fancy_grid")
-        return table
+        gameWinner = f"Game won: {self.winner}"
+        return table + "\n" + gameWinner
 
     def set_winner(self, player: str):
         self.winner = player
